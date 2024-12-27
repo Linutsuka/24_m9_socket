@@ -1,0 +1,6 @@
+City NameSant Feliu de Guixols
+Temperature:10
+WindSpeed:15
+Sunrise:08:06
+Sunset:17:16
+Humidity:79
