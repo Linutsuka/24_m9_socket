@@ -65,19 +65,28 @@ def handle(conn,addr,clients,product):
                     flag = False
                     conn.send(brodcast_recv(conn,clients).encode("utf-8"))  # Enviar seller resposta buyer primera buyer: Start Conversation
                     #   COMENÇA LA NEGOCIACIO
-
-                
-
-
+                  
     elif nameClient == "buyer":
         while connected:
             if len(clients) == 2:
                 conn.send(brodcast_recv(conn,clients).encode("utf-8")) #    seller: accept
                     #   COMENÇA LA NEGOCIACIO
+                n = True
+                while n:
+                    try:
+                        message = conn.recv(1024).decode()  
+                        brodcast_send(conn,clients,message)
+                        conn.send(brodcast_recv(conn,clients).encode("utf-8"))
+                        time.sleep(5)
+                    except:
+
+                        print("Server close")
+                        server.close()
+                        connected = False
+                        clients.clear()
+                        n = False
        
         
-
-
 while connected:
 
     try:
@@ -89,6 +98,9 @@ while connected:
         show_text(f"connections ready :{threading.active_count() - 1 }")
     except KeyboardInterrupt:
         print("< KeyboardInterrupt, Server close")
+        server.close()
+    except:
+        connected = False
         server.close()
 
 

@@ -1,6 +1,8 @@
 import socket
 import datetime
+from random import randrange as rand
 import sys
+import time
 
 def show_text(t):print(f"{datetime.datetime.now()} {t}")
 
@@ -19,11 +21,26 @@ try:
     client.send(data.encode("utf-8"))
 
 
+    conversationReady = False
+
     connected = True
     flag = True
+
+
+    product = ""
+
+    def election ():
+        n = rand(0,3)
+        if n == 0: return "Want"
+        elif n == 1: return "Low"
+        else:   return "Stop"
+
+
+
     while connected:
         if flag:
             p = client.recv(1024).decode()
+            product = p
             show_text(f"client recived this product: {p}")
             flag = False
             show_text(f"client send 'Start Conversation' to seller")
@@ -31,7 +48,29 @@ try:
         message = client.recv(1024).decode()
         if message != "":
             show_text(f"client recived {message}")
-            
+            #   comença la negocaciacio
+            if message == "Accept":
+                conversationReady = True
+            # SI LA CONVERSACIO ESTA INICIADA
+        if conversationReady:
+
+            if message == "Stop":
+                toSend = "Stop"
+                connected = False
+            if message[:4] == "Sale":
+                show_text(f"status sale: Sale with Price: {message[4:-1]}")
+                toSend = "Stop"
+                connected = False
+            else:
+                toSend = election()
+                client.send(str(toSend).encode())
+            show_text(f"client send {toSend}")
+
+
+
+    print("CLIENT CLOSED")
+    client.close()
 
 except KeyboardInterrupt:
     print("< KeyboardInterrupt error")
+    client.close()
