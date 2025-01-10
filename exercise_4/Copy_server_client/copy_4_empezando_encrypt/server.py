@@ -14,7 +14,7 @@ def broadcast(co,clients,m):
     for c in clients:
         if c != co:
             c.send(m)
-            show_text(f"send {c.getpeername()} message {m}")
+            show_text(f"send {c.getpeername()} message {m.decode('utf-8')}")
 
 #   FUNCTION THREAD
 def handle(conn,clients,key):
@@ -23,22 +23,17 @@ def handle(conn,clients,key):
     while clientConnected:
         try:
             message = conn.recv(1024)
-            message = recive(key,message)
-           
-            if message == "disconnect":
+            broadcast(conn,clients,message)
+            if message.decode() == "disconnect":
                 index = clients.index(conn)
                 clients.remove(conn)
                 conn.close()
                 nickname = nicknames[index]
-                message = f"{nickname} left"
-                broadcast(conn, clients, sende(key,message))
+                broadcast(conn, clients, f"{nickname} left".encode('utf-8'))
                 nicknames.remove(nickname)
                 # >> Poner configuracion cuando este
                 clientConnected = False
-                break
-           
-            message = sende(key,message)
-            broadcast(conn,clients,message)
+
         except:
             print("error with a client")
             # Si algo falla se quita la información de los clientes de la array de clientes y su información relacionada.
@@ -46,8 +41,7 @@ def handle(conn,clients,key):
             clients.remove(conn)
             conn.close()
             nickname = nicknames[index]
-            message = f"{nickname} left"
-            broadcast(conn, clients,sende(key,message))
+            broadcast(conn, clients, f"{nickname} left".encode('utf-8'))
             nicknames.remove(nickname)
             # >> Poner configuracion cuando este
             clientConnected = False
@@ -96,16 +90,14 @@ try:
         conn, addr = server.accept()
         
         conn.send(key_encrypted)
-        
+        print(key_encrypted)
         message = conn.recv(1024)
         print(f"client status key :  {AES.decrypt_message(key,message)}")
-        
         #message = conn.recv(1024).decode("utf-8")
-        time.sleep(1)  
+        time.sleep(3)  
         #   ASK NICK NAME
-        conn.send(sende(key,"NICK"))
-        nickname_color = conn.recv(1024)
-        nickname_color = recive(key,nickname_color)
+        conn.send("NICK".encode("utf-8"))
+        nickname_color = conn.recv(1024).decode()
         #  
         print(nickname_color+"<<")
         nickname = nickname_color.split("$")[0]
@@ -117,9 +109,8 @@ try:
        
 
         show_text(f"New connexion ready, addr:' {addr}  '. Nickname: {nickname} || Color: {color}")
-        e = f"{nickname} joined!"
-        broadcast(conn,clients,sende(key,e))
-        conn.send(sende(key,"connected to server!"))
+        broadcast(conn,clients,f"{nickname} joined!".encode("utf-8"))
+        conn.send("connected to server!".encode("utf-8"))
 
         th = threading.Thread(target=handle, args= ((conn,clients,key)))
         th.start()

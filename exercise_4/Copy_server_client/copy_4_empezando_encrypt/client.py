@@ -71,15 +71,12 @@ miau = True
 global key_aes 
 key_aes = None 
 
-#   encrypt messages with aes return bytes
 def sende(m):
     m = AES.encrypt_message(key_aes,m)
     return m
-#   decrypt messages with aes return string
 def recive(m):
     m = AES.decrypt_message(key_aes,m)
     return m
-
 # Rep missatje del sevidor. Si el missatje es NICK envia nickname. Si es qualsevol cosa, printeja el missatje.
 def receive_message(cl, nickname):
 
@@ -95,26 +92,30 @@ def receive_message(cl, nickname):
 
                 if key_aes == '':
         
-                    #   reciv the key encrypted with rsa bytes
+                    #   reciv the key encrypted with rsa
                     from do_rsa import RSA_
 
                     rsa = RSA_("d",".",message)
-                    #   decrypt the key
+                        #   decrypt the key
                     rsa.decrypt_txt()
                     key_aes = rsa.get_ciphertext()
-                   
+                    printc(str(key_aes),1)
                     printc("Recived without fails the secret key!",1)
+                    #message = AES.encrypt_message(key_aes,"ACCEPT")
+                    #printc(str(sende()),1)
                     message = sende("accept")
                     cl.send(message)  # Envías un mensaje indicando que aceptaste
 
                 else:
-                    message = recive(message)
+                    message = message.decode("utf-8")
                     
                     if message == 'NICK':
-                        nickname = sende(nickname)
-                        cl.send(nickname)
+                        #nickname = sende(nickname)
+                        cl.send(nickname.encode('utf-8'))
+                    
                     
                     if message.find("$") != -1 and message.find(":") != -1:
+                        printc(message,1)
                         name_color_message = message.split("$") #   nom$color:message  >> nom  color$message
                         color_message = name_color_message[1].split(":") 
                         user_config = str(name_color_message[0]+color_message[0])
@@ -126,9 +127,8 @@ def receive_message(cl, nickname):
                     else:
                         printc(message,color_value)
             except Exception as e:
-                show_ctext("Closing")
-                curses.endwin()
-               
+                show_ctext("an error occured!")
+                show_ctext(f"{e}")
                
                 cl.close()
                 miau = False
@@ -147,13 +147,13 @@ def send_message(cl, nickname):
                 m = input_write("")
                 if m != "disconnect":
                     message = '{}: {}'.format(nickname, m)
-                    message = sende(message)
-                    cl.send(message)
+                    cl.send(message.encode('utf-8'))
                 else:
-                    m = sende(m)
-                    cl.send(m)
+
+                    cl.send(m.encode('utf-8'))
                     miau  = False
                     printc("Closing",2)
+                   
                     break
     except:
         printc("error",2)
