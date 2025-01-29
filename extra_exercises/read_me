@@ -1,0 +1,4 @@
+Killer dice -> 3 jugadors envien numeros al servidor, si els 3 han tirat el servidor envia la resposta, si es la mateixa el usuari mor. Segueix fins que només quedi 1.
+Medieval link -> auxiliar.py : agafa la informació d'una web sobre castells medievals, crea un txt amb link+castell
+		 especific_info : amb el txt generat obre els links i busca quina es la posició geografica, printeja resultat
+		 
