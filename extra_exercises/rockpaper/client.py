@@ -2,26 +2,16 @@ import socket
 import threading
 
 def compare_play(msgsend, msgrec):
-    #   paper
-    #   rock
-    #   tisors
 
-    #   mismas jugadas
     if msgsend == msgrec:
         return 0 
     #   rock vs papel
     elif msgsend == "paper" and msgrec == "rock":
-        return 0
-    elif msgsend == "rock" and msgrec == "paper":
         return -1
     # paper vs tisors
-    elif msgsend == "tisors" and msgrec == "paper":
-        return 0
     elif msgsend == "paper" and msgrec == "tisors":
         return -1
     # tisors vs rock
-    elif msgsend == "rock" and msgrec == "tisors":
-        return 0
     elif msgsend == "tisors" and msgrec == "rock":
         return -1
     else:
@@ -32,7 +22,7 @@ if __name__ == "__main__":
     try:
         client = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
        
-        client.connect(("localhost", 65431))
+        client.connect(('192.168.1.38', 65431))
         print(f"Client {client.getsockname()}-----[RULES]-----\nTisors WIN Paper\nPaper WIN Rock\nRock WIN Tisors\n------------------------------")
     
         nickname = input("Choose your nickname: >")

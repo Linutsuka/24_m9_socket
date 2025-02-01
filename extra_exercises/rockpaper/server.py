@@ -48,7 +48,7 @@ def handle(conn,client,nicknames):
 if __name__ == "__main__":
     try:
         server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        server.bind(("localhost",65431))
+        server.bind(("192.168.1.38",65431))
         server.listen(2)
         print(f"server connect at {server.getsockname()}")
         print("Paper,rock and tisors game server, if server shutdown clients will closed automatically.")
