@@ -9,12 +9,8 @@ def close_connection(conn):
        nickname = nicknames[index]
        nicknames.remove(nickname)
        print(f"removed user: {nickname}")
-def getName(conn):
-    if conn in client:
-        index = client.index(conn)
-        return nicknames[index]
-
-def handle(conn,client,nicknames):
+       
+def handle(conn):
     clientCOnnected = True
     while clientCOnnected:
         try:
@@ -45,9 +41,7 @@ if __name__ == "__main__":
         nicknames = []
         #
         event = threading.Event()
-        serverConnected = True
-        #   
-        
+        #  
         for _ in range(users):
             conn, addr = server.accept()
 
@@ -56,7 +50,7 @@ if __name__ == "__main__":
             nicknames.append(nickname)
             print(f"user: {nickname.title()} connected conn: {conn.getpeername()}")
 
-            th = threading.Thread(target=handle, args=(conn,client,nicknames))
+            th = threading.Thread(target=handle, args=(conn,))
             th.start()
        
         while len(client) > 1:
